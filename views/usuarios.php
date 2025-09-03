@@ -57,8 +57,8 @@ include_once '../config/config.php';
                     <td><a href="../user/editUser.php?idUsuario=<?php echo $lista['idUsuario'] ?>" class="btn btn-primary" value="Editar">Editar</a>
                     </td>
                     <td>
-                        <form action="eliminar-usuario.php" method="POST">
-                            <input type="hidden" name="id" value="<?php echo $lista['idUsuario'] ?>">
+                        <form action="../user/deleteUser.php" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">
+                            <input type="hidden" name="idUsuario" value="<?php echo $lista['idUsuario'] ?>">
                             <button class="btn btn-danger">Eliminar</button>
                         </form>
                     <td>
