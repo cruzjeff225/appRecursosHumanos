@@ -10,6 +10,7 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link active" href="../views/home.php">Inicio</a></li>
                     <li class="nav-item"><a class="nav-link" href="../views/usuarios.php">Usuarios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../views/personal.php">Personal</a></li>
                     <li class="nav-item"><a class="nav-link" href="../public/salir.php">Cerrar Sesión</a></li>
                 </ul>
             </div>
