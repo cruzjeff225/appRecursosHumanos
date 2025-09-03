@@ -10,11 +10,11 @@
 <body>
 <form action="../controllers/validation.php" method="POST">
   <div class="form-group ">
-    <label for="exampleInputEmail1">Email address</label>
+    <label for="exampleInputEmail1">Correo Electrónico</label>
     <input type="email" class="form-control" id="exampleInputEmail1" name="email" aria-describedby="emailHelp" placeholder="Ingresa tu correo">
     </div>
   <div class="form-group">
-    <label for="exampleInputPassword1">Password</label>
+    <label for="exampleInputPassword1">Contraseña</label>
     <input type="password" class="form-control" id="exampleInputPassword1" name="password" placeholder="Contraseña">
   </div>
   <br>
