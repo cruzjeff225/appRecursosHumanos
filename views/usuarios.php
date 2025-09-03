@@ -54,7 +54,7 @@ include_once '../config/config.php';
                     <td><?php echo $i++ ?></td>
                     <td><?php echo $lista['nombreUsuario'] ?></td>
                     <td><?php echo $lista['email'] ?></td>
-                    <td><a href="../user/editUser.php?id=<?php echo $lista['idUsuario'] ?>" class="btn btn-primary" value="Editar">Editar</a>
+                    <td><a href="../user/editUser.php?idUsuario=<?php echo $lista['idUsuario'] ?>" class="btn btn-primary" value="Editar">Editar</a>
                     </td>
                     <td>
                         <form action="eliminar-usuario.php" method="POST">
