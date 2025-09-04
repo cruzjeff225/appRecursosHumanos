@@ -25,6 +25,8 @@ $fotografía = isset($_POST['fotografía']) ? $_POST['fotografía'] : "";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Agregar Usuario</title>
     <style>
         .contenido {
@@ -38,80 +40,91 @@ $fotografía = isset($_POST['fotografía']) ? $_POST['fotografía'] : "";
     include_once('../views/nav.php');
     ?>
     </br>
-    <div class="contenido">
-        <form action="" method="POST" class="form-control">
-            <div class="form-group col-md-6">
-                <label for="nombre">Nombre</label>
-                <input type="text" class="form-control" id="nombre" placeholder="Ingresa el nombre del empleado" name="nombre" value="<?php echo $nombre ?>">
-            </div>
-            <div class="form-group">
-                <label for="Teléfono">Teléfono</label>
-                <input type="text" class="form-control" id="Teléfono" name="Teléfono" value="<?php echo $teléfono ?>">
-            </div>
-            <div class="form-group">
-                <label for="DUI">DUI</label>
-                <input type="text" class="form-control" id="DUI" name="DUI" value="<?php echo $DUI ?>">
-            </div>
-            <div class="form-group col-md-6">
-                <label for="fechaNacimiento">Fecha de Nacimiento</label>
-                <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento" value="<?php echo $fechaNacimiento ?>">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="departamento">Departamento</label>
-                <select id="departamento" class="form-select" name="departamento" value="<?php echo $departamento ?>">
-                    <option selected>Seleccionar...</option>
-                    <option>Ahuchapán</option>
-                    <option>Cabañas</option>
-                    <option>Chalatenango</option>
-                    <option>Cuscatlán</option>
-                    <option>La Libertad</option>
-                    <option>La Paz</option>
-                    <option>La Unión</option>
-                    <option>Morazán</option>
-                    <option>San Miguel</option>
-                    <option>San Vicente</option>
-                    <option>Santa Ana</option>
-                    <option>Sonsonate</option>
-                    <option>Usulután</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="distrito">Distrito</label>
-                <input type="text" class="form-control" id="distrito" name="distrito" value="<?php echo $distrito ?>">
-            </div>
-            <!-- Dirección -->
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="coloniaResidencia">Colonia</label>
-                    <input type="text" class="form-control" id="coloniaResidencia" name="coloniaResidencia" value="<?php echo $coloniaResidencia ?>">
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center fw-bold">Registro de Empleado</h1>
+        <form action="" method="POST" class="form-control shadow-sm p-4">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="nombre" class="form-label fw-bold">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa el nombre del empleado" required>
                 </div>
-                <div class="form-group col-md-6">
-                    <label for="calleResidencia">Calle</label>
-                    <input type="text" class="form-control" id="calleResidencia" name="calleResidencia" value="<?php echo $calleResidencia ?>">
-                </div>
-                <div class="form-group col-md-2">
-                    <label for="casaResidencia">Casa</label>
-                    <input type="text" class="form-control" id="casaResidencia" name="casaResidencia" value="<?php echo $casaResidencia ?>">
+                <div class="col-md-6">
+                    <label for="Teléfono" class="form-label fw-bold">Teléfono</label>
+                    <input type="text" class="form-control" id="Teléfono" name="Teléfono" placeholder="Ingresa el teléfono" required>
                 </div>
             </div>
-            <div class="form-group col-md-4">
-                <label for="estadoCivil">Estado Civil</label>
-                <select id="estadoCivil" class="form-select" name="estadoCivil" value="<?php echo $estadoCivil ?>">
-                    <option selected>Seleccionar...</option>
-                    <option>Soltero</option>
-                    <option>Casado</option>
-                    <option>Divorciado</option>
-                    <option>Viudo</option>
-                </select>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="DUI" class="form-label fw-bold">DUI</label>
+                    <input type="text" class="form-control" id="DUI" name="DUI" placeholder="Ingresa el DUI" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="fechaNacimiento" class="form-label fw-bold">Fecha de Nacimiento</label>
+                    <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento" required>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="fotografía" class="form-label">Fotografía</label>
-                <input class="form-control form-control-sm" id="fotografía" type="file" name="fotografía" value="<?php echo $fotografía ?>">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="departamento" class="form-label fw-bold">Departamento</label>
+                    <select id="departamento" class="form-select" name="departamento" required>
+                        <option selected disabled>Seleccionar...</option>
+                        <option>Ahuachapán</option>
+                        <option>Cabañas</option>
+                        <option>Chalatenango</option>
+                        <option>Cuscatlán</option>
+                        <option>La Libertad</option>
+                        <option>La Paz</option>
+                        <option>La Unión</option>
+                        <option>Morazán</option>
+                        <option>San Miguel</option>
+                        <option>San Vicente</option>
+                        <option>San Salvador</option>
+                        <option>Santa Ana</option>
+                        <option>Sonsonate</option>
+                        <option>Usulután</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="distrito" class="form-label fw-bold">Distrito</label>
+                    <input type="text" class="form-control" id="distrito" name="distrito" placeholder="Ingresa el distrito" required>
+                </div>
             </div>
-            <br>
-            <input type="submit" class="form-control btn btn-primary" value="Registrar">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="coloniaResidencia" class="form-label fw-bold">Colonia</label>
+                    <input type="text" class="form-control" id="coloniaResidencia" name="coloniaResidencia" placeholder="Ingresa la colonia" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="calleResidencia" class="form-label fw-bold">Calle</label>
+                    <input type="text" class="form-control" id="calleResidencia" name="calleResidencia" placeholder="Ingresa la calle" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="casaResidencia" class="form-label fw-bold">Casa</label>
+                    <input type="text" class="form-control" id="casaResidencia" name="casaResidencia" placeholder="Ingresa el número de casa" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="estadoCivil" class="form-label fw-bold">Estado Civil</label>
+                    <select id="estadoCivil" class="form-select" name="estadoCivil" required>
+                        <option selected disabled>Seleccionar...</option>
+                        <option>Soltero</option>
+                        <option>Casado</option>
+                        <option>Divorciado</option>
+                        <option>Viudo</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="fotografía" class="form-label fw-bold">Fotografía</label>
+                    <input class="form-control" id="fotografía" type="file" name="fotografía">
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-save"></i> Registrar
+                </button>
+            </div>
         </form>
-
     </div>
 </body>
 

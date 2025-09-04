@@ -16,6 +16,8 @@ $email = isset($_POST['email']) ? $_POST['email'] : "";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Agregar Usuario</title>
     <style>
         .contenido {
@@ -28,18 +30,33 @@ $email = isset($_POST['email']) ? $_POST['email'] : "";
     <?php
     include_once('../views/nav.php');
     ?>
-    <div class="contenido">
-        <form action="" method="POST" class="form-control">
-            <label for="nombreUsuario" class="form-label">Usuario</label>
-            <input type="text" name="nombreUsuario" id="nombreUsuario" class="form-control" required placeholder="Ingrese su nombre de usuario" value="<?php echo $nombreUsuario ?>">
-
-            <label for="email" class="form-label">Correo</label>
-            <input type="email" name="email" id="email" class="form-control" required placeholder="Ingrese su correo valido" value="<?php echo $email ?>">
-
-            <label for="password" class="form-label">Contraseña</label>
-            <input type="password" name="password" id="password" class="form-control" required placeholder="*********">
-            <br>
-            <input type="submit" class="form-control btn btn-primary" value="Registrar">
+    </br>
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center fw-bold">Registro de Usuario</h1>
+        <form action="" method="POST" class="form-control shadow rounded p-5">
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <label for="nombreUsuario" class="form-label fw-light">Usuario</label>
+                    <input type="text" class="form-control rounded-pill" id="nombreUsuario" name="nombreUsuario" placeholder="Ingresa el nombre de usuario" required value="<?php echo $nombreUsuario ?>">
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <label for="email" class="form-label fw-light">Correo</label>
+                    <input type="email" class="form-control rounded-pill" id="email" name="email" placeholder="Ingresa un correo válido" required value="<?php echo $email ?>">
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <label for="password" class="form-label fw-light">Contraseña</label>
+                    <input type="password" class="form-control rounded-pill" id="password" name="password" placeholder="*********" required>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5">
+                    <i class="fas fa-save"></i> Registrar
+                </button>
+            </div>
         </form>
     </div>
 </body>
