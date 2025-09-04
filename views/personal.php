@@ -34,7 +34,7 @@ include_once '../config/config.php';
     ?>
     <div class="contenido">
         <br>
-        <a href="../user/addUser.php" class="btn btn-success">Nuevo Empleado</a>
+        <a href="../employees/addEmployee.php" class="btn btn-success">Nuevo Empleado</a>
         <br>
 
         <table class="table">
@@ -72,6 +72,7 @@ include_once '../config/config.php';
                     <td><?php echo $lista['casaResidencia'] ?></td>
                     <td><?php echo $lista['estadoCivil'] ?></td>
                     <td><?php echo $lista['fotografía'] ?></td>
+                    <!-- Formatear la fecha de registro -->
                     <td><?php echo date ('Y-m-d', strtotime($lista['fechaRegistro'])) ?></td>
                     <td><a href="../employees/editEmployee.php?idPersonal=<?php echo $lista['idPersonal'] ?>" class="btn btn-primary" value="Editar">Editar</a>
                     </td>
