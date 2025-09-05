@@ -156,7 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Insertar nuevo empleado en la base de datos
         $insertar = "INSERT INTO personal (nombre, Telefono, DUI, fechaNacimiento, departamento, distrito, coloniaResidencia, calleResidencia, casaResidencia, estadoCivil, fotografía) VALUES ('$nombre', '$teléfono', '$DUI', '$fechaNacimiento', '$departamento', '$distrito', '$coloniaResidencia', '$calleResidencia', '$casaResidencia', '$estadoCivil', '$fotografía')";
         if (mysqli_query($con, $insertar)) {
-            echo "<script>alert(\"Usuario registrado exitosamente.\"); window.location.href = '../views/usuarios.php';</script>";
+            echo "<script>alert(\"Usuario registrado exitosamente.\"); window.location.href = '../views/personal.php';</script>";
         } else {
             echo "<script>alert(\"Error al registrar el usuario: " . mysqli_error($con) . "\"); window.location.href = 'addEmployee.php';</script>";
         }
