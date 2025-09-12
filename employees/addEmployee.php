@@ -42,7 +42,7 @@ $fotografía = isset($_POST['fotografía']) ? $_POST['fotografía'] : "";
     </br>
     <div class="container mt-5">
         <h1 class="mb-4 text-center fw-bold">Registro de Empleado</h1>
-        <form action="" method="POST" class="form-control shadow-sm p-4">
+        <form action="" method="POST" class="form-control shadow-sm p-4" enctype="multipart/form-data">
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="nombre" class="form-label fw-bold">Nombre</label>
@@ -116,7 +116,7 @@ $fotografía = isset($_POST['fotografía']) ? $_POST['fotografía'] : "";
                 </div>
                 <div class="col-md-6">
                     <label for="fotografía" class="form-label fw-bold">Fotografía</label>
-                    <input class="form-control" id="fotografía" type="file" name="fotografía">
+                    <input class="form-control" id="fotografía" type="file" name="fotografía" accept="image/*">
                 </div>
             </div>
             <div class="text-center">
@@ -144,7 +144,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $calleResidencia = isset($_POST['calleResidencia']) ? $_POST['calleResidencia'] : '';
     $casaResidencia = isset($_POST['casaResidencia']) ? $_POST['casaResidencia'] : '';
     $estadoCivil = isset($_POST['estadoCivil']) ? $_POST['estadoCivil'] : '';
-    $fotografía = isset($_POST['fotografía']) ? $_POST['fotografía'] : '';
+
+
+    // Manejar la carga de la fotografía
+    $fotografía = 'user.png'; // Valor por defecto
+    if(isset($_FILES['fotografía']) && $_FILES['fotografía']['error'] == 0) {
+        $directorio = "../img/imgEmployees/"; // Directorio donde se guardaran las imágenes
+        $tempName = $_FILES['fotografía']['tmp_name'];
+        $fileName = basename($_FILES['fotografía']['name']);
+        $path = $directorio . $fileName;
+
+        // Mover el archivo subido al directorio deseado
+        if(move_uploaded_file($tempName, $path)) {
+            $fotografía = $fileName; // Actualizar el nombre del archivo si se subió correctamente
+        } else {
+            echo "<script>alert(\"Error al subir la fotografía.\");</script>";
+        }
+    }
 
 
     // Verificar si el número de DUI de empleado ya existe

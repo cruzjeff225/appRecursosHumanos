@@ -79,9 +79,12 @@ include_once '../config/config.php';
                     <td><?php echo $lista['casaResidencia'] ?></td>
                     <td><?php echo $lista['estadoCivil'] ?></td>
                     <td>
-                        <img src="../img/user.png" alt="Fotografía de <?php echo $lista['nombre'] ?>" 
-                        style="width: 50px; height: 50px;"
-                        width="50px" height="50px">
+                        <?php
+                        $fotografía = (!empty($lista['fotografía']) && $lista['fotografía'] != "user.png")
+                            ? "../img/imgEmployees/". $lista['fotografía']
+                            : "../img/user.png";
+                        ?>
+                        <img src="<?php echo $fotografía; ?>" alt="Fotografía de <?php echo $lista['nombre']; ?>" style="width: 50px; height: 50px; border-radius: 50%;">
                     </td>
                     <!-- Formatear la fecha de registro -->
                     <td><?php echo date ('Y-m-d', strtotime($lista['fechaRegistro'])) ?></td>
