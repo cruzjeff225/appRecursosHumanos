@@ -92,37 +92,35 @@ include_once '../config/config.php';
 
                     <!-- Modal de Detalles del Empleado -->
                     <div class="modal fade" id="verModal<?php echo $lista['idPersonal']; ?>" tabindex="-1" aria-labelledby="verModalLabel<?php echo $lista['idPersonal']; ?>" aria-hidden="true">
-                      <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                          <div class="modal-header bg-info text-white">
-                            <h5 class="modal-title" id="verModalLabel<?php echo $lista['idPersonal']; ?>">Detalles de <?php echo $lista['nombre']; ?></h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                          </div>
-                          <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-4 text-center">
-                                    <img src="<?php echo $fotografía; ?>" alt="avatar" class="img-thumbnail" width="150" height="150">
+                        <div class="modal-dialog modal-dialog-centered modal-md" style="max-width: 500px;">
+                            <div class="modal-content border-0 shadow-sm rounded-3" style="background: #f8f9fa; min-width: 400px;">
+                                <div class="modal-header p-2" style="background: #343a40; color: #fff; border-top-left-radius: .5rem; border-top-right-radius: .5rem;">
+                                    <h6 class="modal-title fw-semibold" id="verModalLabel<?php echo $lista['idPersonal']; ?>">Detalles de: <?php echo $lista['nombre']; ?></h6>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                                 </div>
-                                <div class="col-md-8">
-                                    <p><strong>Nombre:</strong> <?php echo $lista['nombre']; ?></p>
-                                    <p><strong>Teléfono:</strong> <?php echo $lista['Telefono']; ?></p>
-                                    <p><strong>DUI:</strong> <?php echo $lista['DUI']; ?></p>
-                                    <p><strong>Fecha de nacimiento:</strong> <?php echo $lista['fechaNacimiento']; ?></p>
-                                    <p><strong>Departamento:</strong> <?php echo $lista['departamento']; ?></p>
-                                    <p><strong>Distrito:</strong> <?php echo $lista['distrito']; ?></p>
-                                    <p><strong>Colonia:</strong> <?php echo $lista['coloniaResidencia']; ?></p>
-                                    <p><strong>Calle:</strong> <?php echo $lista['calleResidencia']; ?></p>
-                                    <p><strong>Casa:</strong> <?php echo $lista['casaResidencia']; ?></p>
-                                    <p><strong>Estado Civil:</strong> <?php echo $lista['estadoCivil']; ?></p>
-                                    <p><strong>Fecha de registro:</strong> <?php echo date('Y-m-d', strtotime($lista['fechaRegistro'])); ?></p>
+                                <div class="modal-body p-4">
+                                    <div class="d-flex align-items-center gap-4">
+                                        <img src="<?php echo $fotografía; ?>" alt="avatar" class="rounded-circle border" width="80" height="80">
+                                        <div class="flex-grow-1">
+                                            <div class="mb-2"><span class="fw-bold">Nombre:</span> <?php echo $lista['nombre']; ?></div>
+                                            <div class="mb-2"><span class="fw-bold">Teléfono:</span> <?php echo preg_replace('/^(\d{4})(\d{4})$/', '$1-$2', $lista['Telefono']); ?></div>
+                                            <div class="mb-2"><span class="fw-bold">DUI:</span> <?php echo preg_replace('/^(\d{8})(\d)$/', '$1-$2', $lista['DUI']); ?></div>
+                                            <div class="mb-2"><span class="fw-bold">Nacimiento:</span> <?php echo $lista['fechaNacimiento']; ?></div>
+                                            <div class="mb-2"><span class="fw-bold">Departamento:</span> <?php echo $lista['departamento']; ?></div>
+                                            <div class="mb-2"><span class="fw-bold">Distrito:</span> <?php echo $lista['distrito']; ?></div>
+                                            <div class="mb-2"><span class="fw-bold">Colonia:</span> <?php echo $lista['coloniaResidencia']; ?></div>
+                                            <div class="mb-2"><span class="fw-bold">Calle:</span> <?php echo $lista['calleResidencia']; ?></div>
+                                            <div class="mb-2"><span class="fw-bold">Casa:</span> <?php echo $lista['casaResidencia']; ?></div>
+                                            <div class="mb-2"><span class="fw-bold">Estado Civil:</span> <?php echo $lista['estadoCivil']; ?></div>
+                                            <div class="mb-2"><span class="fw-bold">Registro:</span> <?php echo date('Y-m-d', strtotime($lista['fechaRegistro'])); ?></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer p-2 border-0">
+                                    <button type="button" class="btn btn-light btn-sm px-3" data-bs-dismiss="modal">Cerrar</button>
                                 </div>
                             </div>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                          </div>
                         </div>
-                      </div>
                     </div>
                     <!-- Fin del Modal -->
                 <?php } ?>
@@ -135,4 +133,5 @@ include_once '../config/config.php';
     <!-- Bootstrap Bundle JS (necesario para modales) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
