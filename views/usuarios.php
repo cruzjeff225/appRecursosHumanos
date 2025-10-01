@@ -26,10 +26,17 @@ include_once '../config/config.php';
 <body>
     <?php
     include_once('nav.php');
-    // Consulta para obtener los usuarios
-    $consulta = "SELECT * FROM usuarios";
+    // Consulta SQL para obtener usuarios
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
+        $search = mysqli_real_escape_string($con, $_POST['search']);
+        $query = "SELECT * FROM usuarios WHERE nombreUsuario LIKE '%$search%' OR email LIKE '%$search%'";
+    } else {
+        // Si no hay búsqueda, obtener todos los usuarios
+        $query = "SELECT * FROM usuarios";
+    }
+
     // Ejecutar la consulta
-    $ejecutar_consulta = mysqli_query($con, $consulta);
+    $ejecutar_consulta = mysqli_query($con, $query);
     // Inicializar el contador
     $i = 1;
 
@@ -37,59 +44,66 @@ include_once '../config/config.php';
     ?>
     </br>
     <div class="container mt-5">
-    <h1 class="mb-4 text-center fw-bold">Gestión de Usuarios</h1>
-    <div class="d-flex justify-content-between mb-4">
-        <a href="../user/addUser.php" class="btn btn-success">
-            <i class="fas fa-user-plus"></i> Nuevo Usuario
-        </a>
-    </div>
+        <h1 class="mb-4 text-center fw-bold">Gestión de Usuarios</h1>
+        <div class="d-flex justify-content-start mb-3">
+            <a href="../user/addUser.php" class="btn btn-success d-flex align-items-center" style="white-space: nowrap; height: 38px;">
+                <i class="fas fa-user-plus"></i>&nbsp;Nuevo Usuario
+            </a>
+        </div>
+        <div class="d-flex justify-content-between mb-4">
+            <!-- Search form -->
+            <form class="d-flex flex-grow-1 justify-content-center" action="" method="POST" style="max-width: 500px; margin: 0 auto;">
+                <input class="form-control me-2" type="text" name="search" placeholder="Buscar por usuario o correo" style="height: 38px;" value="<?php echo isset($_POST['search']) ? htmlspecialchars($_POST['search']) : '' ?>">
+                <button class="btn btn-primary" type="submit" style="height: 38px;"><i class="fas fa-search"></i> Buscar</button>
+            </form>
+        </div>
 
-        <div class="table-responsive">
-        <table class="table table-striped">
-            <tr>
-                <th>N°</th>
-                <th>Usuario</th>
-                <th>Correo</th>
-                <th>Acción</th>
-                <th>Admin Contraseña</th>
-            </tr>
-            <?php
-            while ($lista = mysqli_fetch_array($ejecutar_consulta)) {
-            ?>
-                <tr>
-                    <td><?php echo $i++ ?></td>
-                    <td><?php echo $lista['nombreUsuario'] ?></td>
-                    <td><?php echo $lista['email'] ?></td>
-                    <td>
-                            <div class="d-flex gap-2">
-                                <a href="../user/editUser.php?idUsuario=<?php echo $lista['idUsuario'] ?>" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="../user/deleteUser.php" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">
-                                    <input type="hidden" name="idUsuario" value="<?php echo $lista['idUsuario'] ?>">
-                                    <button class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" value="Eliminar" title="Modificar contraseña">
-                            <i class="fas fa-key"></i>
-                        </button>
-                    </td>
-                </tr>
-            <?php
-            }
-            ?>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <tr>
+                        <th>N°</th>
+                        <th>Usuario</th>
+                        <th>Correo</th>
+                        <th>Acción</th>
+                        <th>Admin Contraseña</th>
+                    </tr>
+                    <?php
+                    while ($lista = mysqli_fetch_array($ejecutar_consulta)) {
+                    ?>
+                        <tr>
+                            <td><?php echo $i++ ?></td>
+                            <td><?php echo $lista['nombreUsuario'] ?></td>
+                            <td><?php echo $lista['email'] ?></td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="../user/editUser.php?idUsuario=<?php echo $lista['idUsuario'] ?>" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="../user/deleteUser.php" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">
+                                        <input type="hidden" name="idUsuario" value="<?php echo $lista['idUsuario'] ?>">
+                                        <button class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" value="Eliminar" title="Modificar contraseña">
+                                    <i class="fas fa-key"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
 
-        </table>
-    </div>
-    </div>
-    <?php
-    // Cerrar la conexión a la base de datos
-    mysqli_close($con);
-    ?>
+                </table>
+            </div>
+        </div>
+        <?php
+        // Cerrar la conexión a la base de datos
+        mysqli_close($con);
+        ?>
 </body>
 
-</html>                    
+</html>
