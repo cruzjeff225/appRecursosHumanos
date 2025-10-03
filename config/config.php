@@ -1,14 +1,14 @@
 <?php 
 $server = 'localhost';
 $username = 'root';
-$password = 'StrongPassword123!';
+$password = '';
 $database = 'dbRRHH';
 
 $con = new mysqli($server, $username, $password, $database);
 
 // Check connection
-if ($con) {
-    // echo "Conexion exitosa";
+if ($con->connect_error) {
+    die("Error de conexión: " . $con->connect_error);
 } else {
-    echo "Ha ocurrido un error en la conexion";
+    echo "Conexion exitosa";
 }

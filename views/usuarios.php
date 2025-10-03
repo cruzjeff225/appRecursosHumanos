@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (isset($_SESSION['usuario']) == null) {
+if (!isset($_SESSION['usuario'])) {
     header("Location: ../views/index.php");
 }
 include_once '../config/config.php';
@@ -26,21 +26,21 @@ include_once '../config/config.php';
 <body>
     <?php
     include_once('nav.php');
+    $idSesion = $_SESSION['idUsuario']; // id del usuario logueado
     // Consulta SQL para obtener usuarios
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
         $search = mysqli_real_escape_string($con, $_POST['search']);
-        $query = "SELECT * FROM usuarios WHERE nombreUsuario LIKE '%$search%' OR email LIKE '%$search%'";
+        $query = "SELECT * FROM usuarios WHERE (nombreUsuario LIKE '%$search%' OR email LIKE '%$search%') AND idUsuario != '$idSesion'";
     } else {
         // Si no hay búsqueda, obtener todos los usuarios
-        $query = "SELECT * FROM usuarios";
+        $query = "SELECT * FROM usuarios WHERE idUsuario != '$idSesion'";
+
     }
 
     // Ejecutar la consulta
     $ejecutar_consulta = mysqli_query($con, $query);
     // Inicializar el contador
     $i = 1;
-
-
     ?>
     </br>
     <div class="container mt-5">
@@ -88,10 +88,11 @@ include_once '../config/config.php';
                                 </div>
                             </td>
                             <td>
-                                <button class="btn btn-warning btn-sm" value="Eliminar" title="Modificar contraseña">
-                                    <i class="fas fa-key"></i>
-                                </button>
+                                <a href="../user/editPassword.php?idUsuario=<?php echo $lista['idUsuario'] ?>" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-key"></i>
+                                </a>
                             </td>
+                            
                         </tr>
                     <?php
                     }
