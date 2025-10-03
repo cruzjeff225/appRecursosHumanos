@@ -23,3 +23,19 @@ estadoCivil ENUM('Soltero', 'Casado', 'Divorciado', 'Viudo') not null,
 fotografía VARCHAR(255) not null,
 fechaRegistro timestamp default current_timestamp
 );
+
+CREATE TABLE Rol (
+    IdRol INT auto_increment primary KEY,
+    Rol VARCHAR(100) NOT NULL,
+    Created timestamp default CURRENT_TIMESTAMP
+);
+
+ALTER TABLE Usuarios
+ADD RolId INT;
+
+ALTER TABLE Usuarios
+ADD CONSTRAINT fk_usuario_rol
+FOREIGN KEY (RolId) REFERENCES Rol(Id);
+
+INSERT INTO Rol (RolId) VALUES ('admin');
+INSERT INTO Rol (RolId) VALUES ('superadmin');
