@@ -3,6 +3,7 @@ session_start();
 if (!isset($_SESSION['usuario'])) {
     header("Location: ../views/index.php");
 }
+
 include_once '../config/config.php';
 ?>
 
@@ -65,13 +66,13 @@ include_once '../config/config.php';
                         <th>Usuario</th>
                         <th>Correo</th>
                         <th>Acción</th>
-                        <th>Admin Contraseña</th>
+                        <th>Contraseña</th>
                     </tr>
                     <?php
                     while ($lista = mysqli_fetch_array($ejecutar_consulta)) {
                     ?>
                         <tr>
-                            <td><?php echo $i++ ?></td>
+                        <td><?php echo $i++ ?></td>
                             <td><?php echo $lista['nombreUsuario'] ?></td>
                             <td><?php echo $lista['email'] ?></td>
                             <td>

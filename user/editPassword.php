@@ -3,10 +3,17 @@ session_start();
 if (!isset($_SESSION['usuario'])) {
     header("Location: ../views/index.php");
 }
+
+// Verificar que sea superadmin
+if (!isset($_SESSION['RolNombre']) || $_SESSION['RolNombre'] !== 'superadmin') {
+    echo "<script>alert('No tienes permisos para cambiar contraseñas.'); window.location.href = '../views/usuarios.php';</script>";
+    exit;
+}
+
 include_once '../config/config.php';
 
 $usuarioId = isset($_GET['idUsuario']) ? $_GET['idUsuario'] : "";
-echo "ID capturado: " . $usuarioId;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
     $passwordHash = md5($password);

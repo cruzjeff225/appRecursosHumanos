@@ -8,7 +8,7 @@ $password = isset($_POST['password']) ? $_POST['password'] : '';
 $pwdFormat = md5($password);
 
 // Consulta SQL para verificar las credenciales
-$query = "SELECT idUsuario, nombreUsuario, email, password FROM usuarios WHERE email = '$email' AND password = '$pwdFormat'";
+$query = "SELECT idUsuario, nombreUsuario, email, password, r.Rol AS RolNombre FROM usuarios JOIN rol r ON RolId = r.IdRol WHERE email = '$email' AND password = '$pwdFormat'";
 $result = (mysqli_query($con, $query));
 
 $usuario = mysqli_fetch_assoc($result);
@@ -16,6 +16,7 @@ $usuario = mysqli_fetch_assoc($result);
 session_start();
 $_SESSION['idUsuario'] = $usuario['idUsuario'];
 $_SESSION['usuario'] = $usuario ['nombreUsuario'];
+$_SESSION['RolNombre'] = $usuario['RolNombre'];
 
 // Verificar si se encontró un usuario con las credenciales proporcionadas
 $validation = mysqli_num_rows($result);
