@@ -1,7 +1,7 @@
 <?php 
 $server = 'localhost';
 $username = 'root';
-$password = 'root';
+$password = 'StrongPassword123!';
 $database = 'dbRRHH';
 
 $con = new mysqli($server, $username, $password, $database);
