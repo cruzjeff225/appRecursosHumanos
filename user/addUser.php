@@ -60,7 +60,7 @@ $rol = isset($_POST['rolId']) ? $_POST['rolId'] : '';
                         <option value="" selected disabled>Seleccione Rol</option>
                         <?php
                         // Consulta roles desde la base de datos
-                        $sqlRoles = "SELECT IdRol, Rol FROM rol";
+                        $sqlRoles = "SELECT IdRol, Rol FROM Rol";
                         $resultRoles = mysqli_query($con, $sqlRoles);
 
                         while ($row = mysqli_fetch_assoc($resultRoles)) {
