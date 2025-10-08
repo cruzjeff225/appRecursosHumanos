@@ -57,7 +57,7 @@ include_once '../config/config.php';
                 </tr>
 
                 <?php while ($lista = mysqli_fetch_array($ejecutar_consulta)) { ?>
-                    <tr>
+                    <tr class="align-middle">
                         <td><?php echo $i++; ?></td>
                         <td><?php echo $lista['nombre']; ?></td>
                         <td><?php echo $lista['Telefono']; ?></td>
@@ -70,14 +70,14 @@ include_once '../config/config.php';
                                 ? "../img/imgEmployees/" . $lista['fotografía']
                                 : "../img/user.png";
                             ?>
-                            <img src="<?php echo $fotografía; ?>" alt="Fotografía de <?php echo $lista['nombre']; ?>" style="width: 50px; height: 50px; border-radius: 50%;">
+                            <img src="<?php echo $fotografía; ?>" alt="Fotografía de <?php echo $lista['nombre']; ?>" style="width: 40px; height: 40px; border-radius: 50%; ">
                         </td>
                         <td>
-                            <div class="d-flex gap-2">
+                            <div class="d-flex  align-items-center gap-2">
                                 <a href="../employees/editEmployee.php?idPersonal=<?php echo $lista['idPersonal']; ?>" class="btn btn-primary btn-sm">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="../employees/deleteEmployee.php" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">
+                                <form action="../employees/deleteEmployee.php" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');" class="m-0 p-0">
                                     <input type="hidden" name="idPersonal" value="<?php echo $lista['idPersonal']; ?>">
                                     <button class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash"></i>
