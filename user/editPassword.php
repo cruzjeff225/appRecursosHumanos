@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="hidden" name="idUsuario" value="<?php echo $usuarioId; ?>">
                 <div class="col-md-12">
                     <label for="password" class="form-label fw-light">Contraseña</label>
-                    <input type="password" class="form-control rounded-pill" id="password" name="password" placeholder="*********" required>
+                    <input type="password" class="form-control rounded-pill" id="password" name="password" placeholder="*********" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,16}$"  required>
                 </div>
             </div>
             <div class="text-center">
