@@ -53,9 +53,11 @@ include_once '../config/config.php';
         </div>
         <div class="d-flex justify-content-between mb-4">
             <!-- Search form -->
-            <form class="d-flex flex-grow-1 justify-content-center" action="" method="POST" style="max-width: 500px; margin: 0 auto;">
-                <input class="form-control me-2" type="text" name="search" placeholder="Buscar por usuario o correo" style="height: 38px;" value="<?php echo isset($_POST['search']) ? htmlspecialchars($_POST['search']) : '' ?>">
-                <button class="btn btn-primary" type="submit" style="height: 38px;"><i class="fas fa-search"></i> Buscar</button>
+            <form class="d-flex justify-content-center align-items-center gap-2" action="" method="POST" style="width: 500px; margin: 0 auto;">
+                <input class="form-control flex-grow-1" type="text" name="search" placeholder="Buscar por usuario o correo" style="height: 38px; " value="<?php echo isset($_POST['search']) ? htmlspecialchars($_POST['search']) : '' ?>">
+                <button class="btn btn-primary d-flex align-items-center justify-content-center" type="submit" style="height: 38px;">
+                    <i class="fas fa-search me-1"></i> Buscar
+                </button>
             </form>
         </div>
 
@@ -75,12 +77,12 @@ include_once '../config/config.php';
                         <td><?php echo $i++ ?></td>
                             <td><?php echo $lista['nombreUsuario'] ?></td>
                             <td><?php echo $lista['email'] ?></td>
-                            <td>
-                                <div class="d-flex gap-2">
+                            <td class="align-middle">
+                                <div class="d-flex  align-items-center gap-2">
                                     <a href="../user/editUser.php?idUsuario=<?php echo $lista['idUsuario'] ?>" class="btn btn-primary btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="../user/deleteUser.php" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">
+                                    <form action="../user/deleteUser.php" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');" class="m-0">
                                         <input type="hidden" name="idUsuario" value="<?php echo $lista['idUsuario'] ?>">
                                         <button class="btn btn-danger btn-sm">
                                             <i class="fas fa-trash"></i>
@@ -88,12 +90,11 @@ include_once '../config/config.php';
                                     </form>
                                 </div>
                             </td>
-                            <td>
+                            <td class="align-middle">
                                 <a href="../user/editPassword.php?idUsuario=<?php echo $lista['idUsuario'] ?>" class="btn btn-warning btn-sm">
                                         <i class="fas fa-key"></i>
                                 </a>
                             </td>
-                            
                         </tr>
                     <?php
                     }
