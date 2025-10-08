@@ -16,6 +16,12 @@
         </div>
         <h2 class="text-center fw-bold mb-3" style="color: #343a40;">Sistema de Recursos Humanos</h2>
         <p class="text-center text-muted mb-4">Por favor, ingresa tus credenciales para acceder</p>
+        <!-- Mostrar review de error de credenciales -->
+        <?php if (isset($_GET['error'])): ?>
+            <div class="alert alert-danger text-center" role="alert">
+                Usuario o contraseña incorrectos, intenta nuevamente.
+            </div>
+        <?php endif; ?>
         <form action="../controllers/validation.php" method="POST">
             <div class="mb-3">
                 <label for="email" class="form-label fw-bold" style="color: #343a40;">Correo Electrónico</label>
