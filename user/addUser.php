@@ -35,23 +35,72 @@ $rol = isset($_POST['rolId']) ? $_POST['rolId'] : '';
     <div class="container mt-5">
         <h1 class="mb-4 text-center fw-bold">Registro de Usuario</h1>
         <form action="" method="POST" class="form-control shadow rounded p-5">
-            <div class="row mb-4">
-                <div class="col-md-12">
-                    <label for="nombreUsuario" class="form-label fw-light">Usuario</label>
-                    <input type="text" class="form-control rounded-pill" id="nombreUsuario" name="nombreUsuario" placeholder="Ingresa el nombre de usuario" required value="<?php echo $nombreUsuario ?>">
-                </div>
-            </div>
-            <div class="row mb-4">
-                <div class="col-md-12">
-                    <label for="email" class="form-label fw-light">Correo</label>
-                    <input type="email" class="form-control rounded-pill" id="email" name="email" placeholder="Ingresa un correo válido" required value="<?php echo $email ?>">
-                </div>
-            </div>
-            <div class="row mb-4">
-                <div class="col-md-12">
-                    <label for="password" class="form-label fw-light">Contraseña</label>
-                    <input type="password" class="form-control rounded-pill" id="password" name="password" placeholder="*********" required>
-                </div>
+            <form id="f" method="POST" action="procesar_usuario.php">
+    <!-- Usuario -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <label for="nombreUsuario" class="form-label fw-light">Usuario</label>
+            <input type="text" 
+                   class="form-control rounded-pill" 
+                   id="nombreUsuario" 
+                   name="nombreUsuario" 
+                   placeholder="Ingresa el nombre de usuario"
+                   pattern="[A-Za-z0-9]{4,10}" 
+                   title="El usuario debe tener entre 4 y 10 caracteres, solo letras y números"
+                   required 
+                   value="<?php echo $nombreUsuario ?>">
+        </div>
+    </div>
+
+    <!-- Correo -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <label for="email" class="form-label fw-light">Correo</label>
+            <input type="email" 
+                   class="form-control rounded-pill" 
+                   id="email" 
+                   name="email" 
+                   placeholder="Ingresa un correo válido" 
+                   pattern="[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}" 
+                   title="Introduce un correo válido, por ejemplo: usuario@ejemplo.com"
+                   required 
+                   value="<?php echo $email ?>">
+        </div>
+    </div>
+
+    <!-- Contraseña -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <label for="password" class="form-label fw-light">Contraseña</label>
+            <input type="password" 
+                   class="form-control rounded-pill" 
+                   id="password" 
+                   name="password" 
+                   placeholder="*********" 
+                   pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,16}$" 
+                   title="Debe tener entre 8 y 16 caracteres, incluir al menos una mayúscula, una minúscula y un número"
+                   required>
+        </div>
+    </div>
+
+    <!-- Botón de envío -->
+    <div class="row">
+        <div class="col-md-12">
+            <button type="submit" class="btn btn-primary rounded-pill w-100">Enviar</button>
+        </div>
+    </div>
+</form>
+
+<script>
+  document.getElementById('f').addEventListener('submit', function(e){
+    const emailInput = document.getElementById('email');
+    if(!emailInput.checkValidity()){
+      e.preventDefault();
+      alert(emailInput.title || 'Correo inválido');
+    }
+  });
+</script>
+
             </div>
             <div class="row mb-4">
                 <div class="col-md-12">
