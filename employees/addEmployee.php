@@ -152,16 +152,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $directorio = "../img/imgEmployees/"; // Directorio donde se guardaran las imágenes
         $tempName = $_FILES['fotografía']['tmp_name'];
         $fileName = basename($_FILES['fotografía']['name']);
+        $fileSize = $_FILES['fotografía']['size'];
+        $fileType = mime_content_type($tempName);
+        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
         $path = $directorio . $fileName;
 
-        // Mover el archivo subido al directorio deseado
-        if(move_uploaded_file($tempName, $path)) {
-            $fotografía = $fileName; // Actualizar el nombre del archivo si se subió correctamente
+        //Validaciones
+        $extensionesValidas = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+        $tiposValidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $tamanoValido = 2 * 1024 * 1024;
+
+        //Extensión, Tipo, Tamaño
+        if(!in_array($fileExtension, $extensionesValidas)) {
+            echo "<script>alert(\"La imagen que seleccionaste es de extensión inválida.\");</script>"; 
+        } elseif (!in_array($fileType, $tiposValidos)) {
+            echo "<script>alert(\"La imagen que seleccionaste es de tipo inválido.\");</script>";
+        } elseif ($fileSize > $tamanoValido ) {
+            echo "<script>alert(\La imagen no debe ser mayor a 2MB.\");</script>";
+        } elseif (!getimagesize($tempName)) {
+            echo "<script>alert(\"El archivo no es una imagen válida.\");</script>";
         } else {
-            echo "<script>alert(\"Error al subir la fotografía.\");</script>";
+            //Mover el archivo subido al directorio deseado
+            if(move_uploaded_file($tempName, $path)) {
+                $fotografia = $fileName; // Actualizar el nombre del archivo si se subió correctamente
+            } else {
+                echo "<script>alert(\"Error al subir la fotografía. Intenta nuevamente!\");</script>";
+            }
         }
     }
-
 
     // Verificar si el número de DUI de empleado ya existe
     $verificar_dui = "SELECT * FROM personal WHERE DUI='$DUI'";
