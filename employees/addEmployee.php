@@ -15,7 +15,7 @@ $coloniaResidencia = isset($_POST['coloniaResidencia']) ? $_POST['coloniaResiden
 $calleResidencia = isset($_POST['calleResidencia']) ? $_POST['calleResidencia'] : "";
 $casaResidencia = isset($_POST['casaResidencia']) ? $_POST['casaResidencia'] : "";
 $estadoCivil = isset($_POST['estadoCivil']) ? $_POST['estadoCivil'] : "";
-$fotografía = isset($_POST['fotografía']) ? $_POST['fotografía'] : "";
+$fotografia = isset($_POST['fotografía']) ? $_POST['fotografía'] : "";
 ?>
 
 <!DOCTYPE html>
@@ -147,9 +147,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     // Manejar la carga de la fotografía
-    $fotografía = 'user.png'; // Valor por defecto
-    if(isset($_FILES['fotografía']) && $_FILES['fotografía']['error'] == 0) {
-        $directorio = "../img/imgEmployees/"; // Directorio donde se guardaran las imágenes
+    // Valor por defecto cuando NO se selecciona ninguna imagen
+    $fotografia = 'user.png';
+
+    // Comprobar si el usuario seleccionó un archivo
+    $fileSelected = isset($_FILES['fotografía']) && $_FILES['fotografía']['error'] !== UPLOAD_ERR_NO_FILE;
+
+    if ($fileSelected) {
+        // Solo procesar el archivo si se seleccionó uno
+        if ($_FILES['fotografía']['error'] !== UPLOAD_ERR_OK) {
+            echo "<script>alert(\"Ocurrió un error al subir el archivo.\"); window.history.back();</script>";
+            exit;
+        }
+
+        //Directorio donde se guardaran las imágenes
+        $directorio = "../img/imgEmployees/";
         $tempName = $_FILES['fotografía']['tmp_name'];
         $fileName = basename($_FILES['fotografía']['name']);
         $fileSize = $_FILES['fotografía']['size'];
@@ -164,19 +176,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         //Extensión, Tipo, Tamaño
         if(!in_array($fileExtension, $extensionesValidas)) {
-            echo "<script>alert(\"La imagen que seleccionaste es de extensión inválida.\");</script>"; 
+            echo "<script>alert(\"La imagen que seleccionaste es de extensión inválida.\"); window.history.back();</script>";
+            exit;
         } elseif (!in_array($fileType, $tiposValidos)) {
-            echo "<script>alert(\"La imagen que seleccionaste es de tipo inválido.\");</script>";
+            echo "<script>alert(\"La imagen que seleccionaste es de tipo inválido.\"); window.history.back();</script>";
+            exit;
         } elseif ($fileSize > $tamanoValido ) {
-            echo "<script>alert(\La imagen no debe ser mayor a 2MB.\");</script>";
+            echo "<script>alert(\"La imagen no debe ser mayor a 2MB.\"); window.history.back();</script>";
+            exit;
         } elseif (!getimagesize($tempName)) {
-            echo "<script>alert(\"El archivo no es una imagen válida.\");</script>";
+            echo "<script>alert(\"El archivo no es una imagen válida.\"); window.history.back();</script>";
+            exit;
         } else {
             //Mover el archivo subido al directorio deseado
             if(move_uploaded_file($tempName, $path)) {
                 $fotografia = $fileName; // Actualizar el nombre del archivo si se subió correctamente
             } else {
-                echo "<script>alert(\"Error al subir la fotografía. Intenta nuevamente!\");</script>";
+                echo "<script>alert(\"Error al subir la fotografía. Intenta nuevamente!\"); window.history.back();</script>";
+                exit;
             }
         }
     }
@@ -188,7 +205,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<script>alert(\"El número de DUI de usuario ya existe.\");</script>";
     } else {
         // Insertar nuevo empleado en la base de datos
-        $insertar = "INSERT INTO personal (nombre, Telefono, DUI, fechaNacimiento, departamento, distrito, coloniaResidencia, calleResidencia, casaResidencia, estadoCivil, fotografía) VALUES ('$nombre', '$teléfono', '$DUI', '$fechaNacimiento', '$departamento', '$distrito', '$coloniaResidencia', '$calleResidencia', '$casaResidencia', '$estadoCivil', '$fotografía')";
+    $insertar = "INSERT INTO personal (nombre, Telefono, DUI, fechaNacimiento, departamento, distrito, coloniaResidencia, calleResidencia, casaResidencia, estadoCivil, fotografía) VALUES ('$nombre', '$teléfono', '$DUI', '$fechaNacimiento', '$departamento', '$distrito', '$coloniaResidencia', '$calleResidencia', '$casaResidencia', '$estadoCivil', '$fotografia')";
         if (mysqli_query($con, $insertar)) {
             echo "<script>alert(\"Usuario registrado exitosamente.\"); window.location.href = '../views/personal.php';</script>";
         } else {
