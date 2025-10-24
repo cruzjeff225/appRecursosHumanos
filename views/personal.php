@@ -29,8 +29,17 @@ include_once '../config/config.php';
     <?php include_once('nav.php'); ?>
 
     <?php
-    // Consulta para obtener todo el personal
-    $consulta = "SELECT * FROM personal";
+    // Lógica de Paginación
+    $registrosPorPágina = 10;
+    $paginaActual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+    $offset = ($paginaActual - 1) * $registrosPorPágina;
+
+    // Contar total de personal
+    $totalPersonalQuery = mysqli_query($con, "SELECT COUNT(*) AS total FROM personal");
+    $totalPersonalRow = mysqli_fetch_assoc($totalPersonalQuery)['total'];
+    $totalPaginas = ceil($totalPersonalRow / $registrosPorPágina);
+    // Consulta para obtener todo el personal con límite y offset
+    $consulta = "SELECT * FROM personal LIMIT $registrosPorPágina OFFSET $offset";
     $ejecutar_consulta = mysqli_query($con, $consulta);
     $i = 1;
     ?>
@@ -54,10 +63,9 @@ include_once '../config/config.php';
                 <tr>
                     <th>N°</th>
                     <th>Empleado</th>
-                    <th>Teléfono</th>
                     <th>DUI</th>
-                    <th>Fecha de Nacimiento</th>
                     <th>Departamento</th>
+                    <th>Distrito</th>
                     <th>Fotografía</th>
                     <th>Acción</th>
                 </tr>
@@ -66,10 +74,9 @@ include_once '../config/config.php';
                     <tr class="align-middle">
                         <td><?php echo $i++; ?></td>
                         <td><?php echo $lista['nombre']; ?></td>
-                        <td><?php echo $lista['Telefono']; ?></td>
                         <td><?php echo $lista['DUI']; ?></td>
-                        <td><?php echo $lista['fechaNacimiento']; ?></td>
                         <td><?php echo $lista['departamento']; ?></td>
+                        <td><?php echo $lista['distrito']; ?></td>
                         <td>
                             <?php
                             $fotografía = (!empty($lista['fotografía']) && $lista['fotografía'] != "user.png")
@@ -130,6 +137,27 @@ include_once '../config/config.php';
                     </div>
                 <?php } ?>
             </table>
+            <!-- Paginación -->
+            <nav aria-label="Paginación de empleados">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón Anterior -->
+                    <li class="page-item <?php echo ($paginaActual <= 1) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?pagina=<?php echo $paginaActual - 1; ?>">Anterior</a>
+                    </li>
+
+                    <!-- Números de página -->
+                    <?php for ($j = 1; $j <= $totalPaginas; $j++): ?>
+                        <li class="page-item <?php echo ($paginaActual == $j) ? 'active' : ''; ?>">
+                            <a class="page-link" href="?pagina=<?php echo $j; ?>"><?php echo $j; ?></a>
+                        </li>
+                    <?php endfor; ?>
+
+                    <!-- Botón Siguiente -->
+                    <li class="page-item <?php echo ($paginaActual >= $totalPaginas) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?pagina=<?php echo $paginaActual + 1; ?>">Siguiente</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 
