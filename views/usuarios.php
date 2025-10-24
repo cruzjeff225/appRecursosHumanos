@@ -18,9 +18,24 @@ include_once '../config/config.php';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Alertify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/bootstrap.min.css" />
     <style>
         .contenido {
             margin: 40px;
+        }
+        /* Alertify */
+        .alertify-notifier .ajs-message {
+            color: #fff;
+            background: #FFDE3D;
+            border-radius: 5px;
+            padding: .5rem 1rem;
+            font-weight: 500;
+            transition: transform .12s ease, opacity .12s ease;
+        }
+        .alertify-notifier .ajs-message.ajs-success {
+            background: #6AC763;
         }
     </style>
 </head>
@@ -96,9 +111,9 @@ include_once '../config/config.php';
                                     <a href="../user/editUser.php?idUsuario=<?php echo $lista['idUsuario'] ?>" class="btn btn-primary btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="../user/deleteUser.php" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');" class="m-0">
+                                    <form action="../user/deleteUser.php" method="POST" class="m-0 p-0 delete-form" data-id="<?php echo $lista['idUsuario'] ?>">
                                         <input type="hidden" name="idUsuario" value="<?php echo $lista['idUsuario'] ?>">
-                                        <button class="btn btn-danger btn-sm">
+                                        <button type="submit" class="btn btn-danger btn-sm">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -209,6 +224,79 @@ include_once '../config/config.php';
 
     <!-- Bootstrap Bundle JS (necesario para modales) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery (necesario para AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Alertify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <!-- Personalización de Alerta con Alertify JS -->
+    <script>
+        if (window.alertify) {
+            alertify.defaults.glossary = alertify.defaults.glossary || {};
+            alertify.defaults.glossary.ok = 'Eliminar';
+            alertify.defaults.glossary.cancel = 'Cancelar';
+            alertify.defaults.glossary.title = 'Confirmación';
+
+            // Temas de botones
+            alertify.defaults.theme = alertify.defaults.theme || {};
+            alertify.defaults.theme.ok = 'btn btn-primary';
+            alertify.defaults.theme.cancel = 'btn btn-danger';
+
+            // Posición del Notifier
+            alertify.defaults.notifier = alertify.defaults.notifier || {};
+            alertify.defaults.notifier.position = 'bottom-right';
+        }
+    </script>
+
+    <!-- Elimincación con Alertify JS AJAX -->
+    <script>
+        // Manejar el envío del formulario de eliminación
+        $(document).on('submit', '.delete-form', function(e) {
+            e.preventDefault();
+            var form = this;
+            var id = $(form).data('id') || $(form).find('input[name="idUsuario"]').val();
+
+            alertify.confirm('Confirmar eliminación', '¿Estás seguro de que deseas eliminar este usuario?',
+                function() {
+                    // Enviar petición AJAX
+                    var fd = new FormData(form);
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: fd,
+                        credentials: 'same-origin'
+                    }).then(function(res) {
+                        return res.text().then(function(text) {
+                            // Parsear JSON
+                            try {
+                                var json = JSON.parse(text);
+                                if (json.success) {
+                                    // Remover fila
+                                    var tr = document.querySelector('tr[data-id="' + id + '"]');
+                                    if (tr) tr.remove();
+                                    alertify.success(json.message || 'Eliminado');
+                                } else {
+                                    alertify.error(json.message || 'Error al eliminar');
+                                }
+                            } catch (err) {
+                                // No JSON
+                                if (res.ok) {
+                                    var tr = document.querySelector('tr[data-id="' + id + '"]');
+                                    if (tr) tr.remove();
+                                    alertify.success('Eliminado');
+                                } else {
+                                    alertify.error('Error al eliminar');
+                                }
+                            }
+                        });
+                    }).catch(function() {
+                        alertify.error('Error de red');
+                    });
+                },
+                function() {
+                    alertify.message('Acción cancelada');
+                }
+            );
+        });
+    </script>
     <script>
         (function() {
             const form = document.getElementById('userForm');
