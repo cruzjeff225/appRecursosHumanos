@@ -1,163 +1,88 @@
 <?php
+//Endpoint para agregar usuarios, retornará JSON
 session_start();
-if (isset($_SESSION['usuario']) == null) {
-    header("Location: ../views/index.php");
+header('Content-Type: application/json; charset=utf-8');
+
+if (!isset($_SESSION['usuario'])) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'No autorizado']);
+    exit;
 }
 include_once '../config/config.php';
-// vAriables para capturar los datos del formulario
-$nombreUsuario = isset($_POST['nombreUsuario']) ? $_POST['nombreUsuario'] : "";
-$email = isset($_POST['email']) ? $_POST['email'] : "";
-$rol = isset($_POST['rolId']) ? $_POST['rolId'] : '';
-?>
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <title>Agregar Usuario</title>
-    <style>
-        .contenido {
-            margin: 40px;
-        }
-    </style>
-</head>
-
-<body>
-    <?php
-    include_once('../views/nav.php');
-    ?>
-    </br>
-    <div class="container mt-5">
-        <h1 class="mb-4 text-center fw-bold">Registro de Usuario</h1>
-        <form action="" method="POST" class="form-control shadow rounded p-5">
-            <form id="f" method="POST" action="procesar_usuario.php">
-    <!-- Usuario -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <label for="nombreUsuario" class="form-label fw-light">Usuario</label>
-            <input type="text" 
-                   class="form-control rounded-pill" 
-                   id="nombreUsuario" 
-                   name="nombreUsuario" 
-                   placeholder="Ingresa el nombre de usuario"
-                   pattern="[A-Za-z0-9]{4,10}" 
-                   title="El usuario debe tener entre 4 y 10 caracteres, solo letras y números"
-                   required 
-                   value="<?php echo $nombreUsuario ?>">
-        </div>
-    </div>
-
-    <!-- Correo -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <label for="email" class="form-label fw-light">Correo</label>
-            <input type="email" 
-                   class="form-control rounded-pill" 
-                   id="email" 
-                   name="email" 
-                   placeholder="Ingresa un correo válido" 
-                   pattern="[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}" 
-                   title="Introduce un correo válido, por ejemplo: usuario@ejemplo.com"
-                   required 
-                   value="<?php echo $email ?>">
-        </div>
-    </div>
-
-    <!-- Contraseña -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <label for="password" class="form-label fw-light">Contraseña</label>
-            <input type="password" 
-                   class="form-control rounded-pill" 
-                   id="password" 
-                   name="password" 
-                   placeholder="*********" 
-                   pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,16}$" 
-                   title="Debe tener entre 8 y 16 caracteres, incluir al menos una mayúscula, una minúscula y un número"
-                   required>
-        </div>
-    </div>
-
-    <!-- Botón de envío -->
-    <div class="row">
-        <div class="col-md-12">
-            <button type="submit" class="btn btn-primary rounded-pill w-100">Enviar</button>
-        </div>
-    </div>
-</form>
-
-<script>
-  document.getElementById('f').addEventListener('submit', function(e){
-    const emailInput = document.getElementById('email');
-    if(!emailInput.checkValidity()){
-      e.preventDefault();
-      alert(emailInput.title || 'Correo inválido');
-    }
-  });
-</script>
-
-            </div>
-            <div class="row mb-4">
-                <div class="col-md-12">
-                    <label for="rolId" class="form-label fw-light">Rol de Usuario</label>
-                    <select class="form-select form-select-sm" name="rolId" id="rolId" aria-label=".form-select-sm example" require>
-                        <option value="" selected disabled>Seleccione Rol</option>
-                        <?php
-                        // Consulta roles desde la base de datos
-                        $sqlRoles = "SELECT IdRol, Rol FROM Rol";
-                        $resultRoles = mysqli_query($con, $sqlRoles);
-
-                        while ($row = mysqli_fetch_assoc($resultRoles)) {
-                            // Mantener seleccionado el valor si ya fue enviado en POST
-                            $selected = ($rol == $row['IdRol']) ? 'selected' : '';
-                            echo '<option value="' . $row['IdRol'] . '" ' . $selected . '>' . $row['Rol'] . '</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-            </div>
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5">
-                    <i class="fas fa-save"></i> Registrar
-                </button>
-            </div>
-        </form>
-    </div>
-</body>
-
-</html>
-
-<?php
-// Verificar si se han enviado los datos del formulario
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Capturar datos del formulario
-    $nombreUsuario = isset($_POST['nombreUsuario']) ? $_POST['nombreUsuario'] : '';
-    $email = isset($_POST['email']) ? $_POST['email'] : '';
-    $password = isset($_POST['password']) ? $_POST['password'] : '';
-    $rol = isset($_POST['rolId']) ? $_POST['rolId'] : '';
-    // Hashear la contraseña
-    $passwordHash = md5($password);
-
-    // Verificar si el nombre de usuario ya existe
-    $verificar_usuario = "SELECT * FROM usuarios WHERE nombreUsuario='$nombreUsuario' OR email='$email'";
-    $resultado = mysqli_query($con, $verificar_usuario);
-    if (mysqli_num_rows($resultado) >=1 ) {
-        echo "<script>alert('El nombre de usuario ya existe. Prueba con otro.'); window.location.href = 'addUser.php';</script>";
-    } else {
-        // Insertar nuevo usuario en la base de datos
-        $insertar = "INSERT INTO usuarios (nombreUsuario, email, password, rolId) VALUES ('$nombreUsuario', '$email', '$passwordHash', '$rol')";
-        if (mysqli_query($con, $insertar)) {
-            echo "<script>alert('Usuario registrado exitosamente.'); window.location.href = '../views/usuarios.php';</script>";
-        } else {
-            echo "<script>alert('Error al registrar el usuario: " . mysqli_error($con) . "'); window.location.href = 'addUser.php';</script>";
-        }
-    }
-    // Cerrar la conexión a la base de datos
-    mysqli_close($con);
+//Solo acepta método POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => "Método no válido"]);
+    exit;
 }
+
+//Helper para enviar errores
+function send_error($msg, $code = 400)
+{
+    http_response_code($code);
+    echo json_encode(['success' => false, 'message' => $msg]);
+    exit;
+}
+
+// Capturando datos del formulario
+$nombreUsuario = isset($_POST['nombreUsuario']) ? trim($_POST['nombreUsuario']) : '';
+$email = isset($_POST['email']) ? trim($_POST['email']) : '';
+$password = isset($_POST['password']) ? trim($_POST['password']) : '';
+$rol = isset($_POST['rolId']) ? trim($_POST['rolId']) : '';
+
+//Validaciones básicas
+if (empty($nombreUsuario) || empty($email) || empty($password) || empty($rol)) {
+    send_error('Campos requeridos faltantes: nombreUsuario, email, password, rol');
+}
+
+//Hashear contraseña usando MD5
+$passwordHash = md5($password);
+
+//Verificar si el nombre de usuario o email ya existe
+$nombreUsuario_check = mysqli_real_escape_string($con, $nombreUsuario);
+$email_check = mysqli_real_escape_string($con, $email);
+$verificar_usuario = "SELECT * FROM usuarios WHERE nombreUsuario = '$nombreUsuario_check' OR email = '$email_check' LIMIT 1";
+$resultado = mysqli_query($con, $verificar_usuario);
+if ($resultado && mysqli_num_rows($resultado) >= 1) {
+    send_error('El nombre de usuario o email ya existe. Prueba con otro.', 409);
+}
+
+// Validar rol: debe ser entero
+if (!ctype_digit($rol)) {
+    send_error('Valor de rol inválido. Debe ser un número entero.', 400);
+}
+$rol_int = (int)$rol;
+
+// Valores escapados para evitar inyecciones SQL
+$nombreUsuario_scp = mysqli_real_escape_string($con, $nombreUsuario);
+$email_scp = mysqli_real_escape_string($con, $email);
+$passwordHash_scp = mysqli_real_escape_string($con, $passwordHash);
+
+//Insertar nuevo usuario en la BD haciendo uso de los valores escapados
+$insertar = "INSERT INTO usuarios (nombreUsuario, email, password, RolId) VALUES ('$nombreUsuario_scp', '$email_scp', '$passwordHash_scp', $rol_int)";
+
+if (!mysqli_query($con, $insertar)) {
+    send_error('Error al registrar el usuario. Consulte los logs del servidor.', 500);
+}
+
+// obtener id insertado
+$inserted_id = mysqli_insert_id($con);
+
+// Retornar datos de usuario para renderizar
+http_response_code(201);
+echo json_encode([
+    'success' => true,
+    'message' => 'Usuario registrado exitosamente.',
+    'data' => [
+        'idUsuario' => $inserted_id,
+        'nombreUsuario' => $nombreUsuario_scp,
+        'email' => $email_scp,
+        'rolId' => $rol_int,
+        'password' => ''
+    ]
+]);
+
+mysqli_close($con);
+
 ?>
