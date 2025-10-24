@@ -43,7 +43,12 @@ include_once '../config/config.php';
             </a>
         </div>
 
-        <div class="table-responsive">
+        <!-- Barra de búsqueda -->
+        <div class="d-flex justify-content-between mb-4">
+            <input id="search" class="form-control" type="text" placeholder="Buscar por nombre o DUI..." style="max-width: 500px; margin: 0 auto;">
+        </div>
+
+        <div id="tabla-personal" class="table-responsive">
             <table class="table table-striped">
                 <tr>
                     <th>N°</th>
@@ -132,6 +137,25 @@ include_once '../config/config.php';
 
     <!-- Bootstrap Bundle JS (necesario para modales) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
 
+    <!-- jQuery (necesario para AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#search').on('keyup', function () {
+                var query = $(this).val();
+
+                $.ajax({
+                    url: '../employees/buscar_personal.php',
+                    method: 'POST',
+                    data: { query: query },
+                    success: function (data) {
+                        $('#tabla-personal').html(data);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
 </html>
