@@ -54,7 +54,7 @@ include_once '../config/config.php';
 
 <body>
     <?php include_once('../views/nav.php'); ?>
-
+    <br><br>
     <div class="home-hero-outer">
         <div class="container">
             <div class="text-center mb-5">
@@ -66,7 +66,7 @@ include_once '../config/config.php';
             </div>
 
             <!-- Formulario -->
-            <form id="formDepto" method="POST" class="mb-4 text-center">
+            <form id="formDepto" method="POST" class="mb-4">
                 <label for="departamento" class="form-label fw-semibold">Seleccione un departamento:</label>
                 <select name="departamento" id="departamento" class="form-select w-auto d-inline-block mx-2">
                     <option value="">Todos</option>

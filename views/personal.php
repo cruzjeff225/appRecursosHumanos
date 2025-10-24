@@ -14,10 +14,11 @@ include_once '../config/config.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </br>
     <title>Gestión de Personal</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .contenido {
             margin: 40px;
@@ -83,11 +84,9 @@ include_once '../config/config.php';
                                 <a href="../employees/editEmployee.php?idPersonal=<?php echo $lista['idPersonal']; ?>" class="btn btn-primary btn-sm">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="../employees/deleteEmployee.php" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');" class="m-0 p-0">
+                                <form action="../employees/deleteEmployee.php" method="POST" class="delete-form m-0 p-0">
                                     <input type="hidden" name="idPersonal" value="<?php echo $lista['idPersonal']; ?>">
-                                    <button class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm btn-delete"><i class="fas fa-trash"></i></button>
                                 </form>
                                 <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#verModal<?php echo $lista['idPersonal']; ?>">
                                     <i class="fas fa-eye"></i> Ver más
@@ -420,6 +419,26 @@ include_once '../config/config.php';
             });
         })();
     </script>
+
+    <script>
+        // Delegación de eventos para eliminar
+        $(document).on('click', '.btn-delete', function(){
+            const form = $(this).closest('form');
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result)=>{
+                if(result.isConfirmed) form.submit();
+            });
+        });
+    </script>
+
 </body>
 
 </html>
