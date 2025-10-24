@@ -71,25 +71,26 @@ include_once '../config/config.php';
                 </tr>
 
                 <?php while ($lista = mysqli_fetch_array($ejecutar_consulta)) { ?>
-                    <tr class="align-middle">
-                        <td><?php echo $i++; ?></td>
-                        <td><?php echo $lista['nombre']; ?></td>
-                        <td><?php echo $lista['DUI']; ?></td>
-                        <td><?php echo $lista['departamento']; ?></td>
-                        <td><?php echo $lista['distrito']; ?></td>
-                        <td>
+                    <tr class="align-middle" data-id="<?php echo $lista['idPersonal']; ?>">
+                        <td class="emp-index"><?php echo $i++; ?></td>
+                        <td class="emp-nombre"><?php echo htmlspecialchars($lista['nombre']); ?></td>
+                        <td class="emp-dui"><?php echo $lista['DUI']; ?></td>
+                        <td class="emp-departamento"><?php echo $lista['departamento']; ?></td>
+                        <td class="emp-distrito"><?php echo $lista['distrito']; ?></td>
+                        <td class="emp-foto">
                             <?php
                             $fotografía = (!empty($lista['fotografía']) && $lista['fotografía'] != "user.png")
                                 ? "../img/imgEmployees/" . $lista['fotografía']
                                 : "../img/user.png";
                             ?>
-                            <img src="<?php echo $fotografía; ?>" alt="Fotografía de <?php echo $lista['nombre']; ?>" style="width: 40px; height: 40px; border-radius: 50%; ">
+                            <img src="<?php echo $fotografía; ?>" alt="Fotografía" style="width:40px;height:40px;border-radius:50%;">
                         </td>
                         <td>
-                            <div class="d-flex  align-items-center gap-2">
-                                <a href="../employees/editEmployee.php?idPersonal=<?php echo $lista['idPersonal']; ?>" class="btn btn-primary btn-sm">
+                            <div class="d-flex align-items-center gap-2">
+                                <button class="btn btn-primary btn-sm btn-edit" data-id="<?php echo $lista['idPersonal']; ?>">
                                     <i class="fas fa-edit"></i>
-                                </a>
+                                </button>
+                                <!-- mantén el form de eliminar como estaba -->
                                 <form action="../employees/deleteEmployee.php" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');" class="m-0 p-0">
                                     <input type="hidden" name="idPersonal" value="<?php echo $lista['idPersonal']; ?>">
                                     <button class="btn btn-danger btn-sm">
@@ -277,29 +278,135 @@ include_once '../config/config.php';
         </div>
     </div>
 
+    <!-- Modal de edición que se maneja con updateEmployee.php -->
+    <div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Empleado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editEmployeeForm" enctype="multipart/form-data" class="row g-3">
+                        <input type="hidden" name="idPersonal" id="edit_idPersonal">
+
+                        <div class="col-md-6">
+                            <label for="edit_nombre" class="form-label fw-bold">Nombre</label>
+                            <input type="text" class="form-control" id="edit_nombre" name="nombre"
+                                title="Solo letras y espacios (2-50 caracteres)" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_Telefono" class="form-label fw-bold">Teléfono</label>
+                            <input type="text" class="form-control" id="edit_Telefono" name="Telefono"
+                                pattern="^[267][0-9]{7}$"
+                                title="Debe tener 8 dígitos, iniciando con 2, 6 o 7" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="edit_DUI" class="form-label fw-bold">DUI</label>
+                            <input type="text" class="form-control" id="edit_DUI" name="DUI"
+                                pattern="^[0-9]{8}-?[0-9]$"
+                                title="Debe tener 9 dígitos: 123456789. Sin guiones" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_fechaNacimiento" class="form-label fw-bold">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" id="edit_fechaNacimiento" name="fechaNacimiento" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Departamento</label>
+                            <select id="edit_departamento" class="form-select" name="departamento" required>
+                                <option selected disabled>Seleccionar...</option>
+                                <option>Ahuachapán</option>
+                                <option>Cabañas</option>
+                                <option>Chalatenango</option>
+                                <option>Cuscatlán</option>
+                                <option>La Libertad</option>
+                                <option>La Paz</option>
+                                <option>La Unión</option>
+                                <option>Morazán</option>
+                                <option>San Miguel</option>
+                                <option>San Vicente</option>
+                                <option>San Salvador</option>
+                                <option>Santa Ana</option>
+                                <option>Sonsonate</option>
+                                <option>Usulután</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="edit_distrito" class="form-label fw-bold">Distrito</label>
+                            <input type="text" class="form-control" id="edit_distrito" name="distrito"
+                                title="Solo letras y espacios" required>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="edit_coloniaResidencia" class="form-label fw-bold">Colonia</label>
+                            <input type="text" class="form-control" id="edit_coloniaResidencia" name="coloniaResidencia"
+                                title="Letras, números y símbolos . # -" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="edit_calleResidencia" class="form-label fw-bold">Calle</label>
+                            <input type="text" class="form-control" id="edit_calleResidencia" name="calleResidencia"
+                                title="Letras, números y símbolos . # -" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="edit_casaResidencia" class="form-label fw-bold">Casa</label>
+                            <input type="text" class="form-control" id="edit_casaResidencia" name="casaResidencia"
+                                title="Letras, números o guiones" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="edit_estadoCivil" class="form-label fw-bold">Estado Civil</label>
+                            <select id="edit_estadoCivil" class="form-select" name="estadoCivil" required>
+                                <option selected disabled>Seleccionar...</option>
+                                <option>Soltero</option>
+                                <option>Casado</option>
+                                <option>Divorciado</option>
+                                <option>Viudo</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="edit_fotografia" class="form-label fw-bold">Fotografía</label>
+                            <input class="form-control" id="edit_fotografia" type="file" name="fotografia" accept="image/*">
+                            <small id="edit_currentPhoto" class="text-muted"></small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnUpdateEmployee" class="btn btn-primary">Guardar cambios</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <?php mysqli_close($con); ?>
 
     <!-- Bootstrap Bundle JS (necesario para modales) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-     <!-- jQuery (necesario para AJAX) -->
+    <!-- jQuery (necesario para AJAX) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-     <script>
-        $(document).ready(function () {
-            $('#search').on('keyup', function () {
+    <script>
+        $(document).ready(function() {
+            $('#search').on('keyup', function() {
                 var query = $(this).val();
 
                 $.ajax({
                     url: '../employees/buscar_personal.php',
                     method: 'POST',
-                    data: { query: query },
-                    success: function (data) {
+                    data: {
+                        query: query
+                    },
+                    success: function(data) {
                         $('#tablaPersonal').html(data);
                     }
                 });
             });
         });
-    </script>           
-    
+    </script>
+
     <script>
         (function() {
             const form = document.getElementById('employeeForm');
@@ -447,6 +554,100 @@ include_once '../config/config.php';
                 }
             });
         })();
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Abrir modal y cargar datos
+            document.querySelectorAll('.btn-edit').forEach(function(btn) {
+                btn.addEventListener('click', async function(e) {
+                    const id = this.getAttribute('data-id');
+                    if (!id) return;
+                    try {
+                        const res = await fetch('../employees/getEmployee.php?idPersonal=' + encodeURIComponent(id));
+                        const json = await res.json();
+                        if (!json.success) {
+                            alert(json.message || 'Error al obtener empleado');
+                            return;
+                        }
+                        const d = json.data;
+                        // Rellenar formulario
+                        document.getElementById('edit_idPersonal').value = d.idPersonal || '';
+                        document.getElementById('edit_nombre').value = d.nombre || '';
+                        document.getElementById('edit_Telefono').value = d.Telefono || '';
+                        document.getElementById('edit_DUI').value = d.DUI || '';
+                        document.getElementById('edit_fechaNacimiento').value = d.fechaNacimiento || '';
+                        document.getElementById('edit_departamento').value = d.departamento || '';
+                        document.getElementById('edit_distrito').value = d.distrito || '';
+                        document.getElementById('edit_coloniaResidencia').value = d.coloniaResidencia || '';
+                        document.getElementById('edit_calleResidencia').value = d.calleResidencia || '';
+                        document.getElementById('edit_casaResidencia').value = d.casaResidencia || '';
+                        document.getElementById('edit_estadoCivil').value = d.estadoCivil || '';
+                        document.getElementById('edit_currentPhoto').textContent = d.fotografia ? 'Imagen actual: ' + d.fotografia : '';
+                        // Mostrar modal
+                        var modalEl = document.getElementById('editEmployeeModal');
+                        var modal = new bootstrap.Modal(modalEl);
+                        modal.show();
+                    } catch (err) {
+                        console.error(err);
+                        alert('Error de red al obtener empleado');
+                    }
+                });
+            });
+
+            // Enviar formulario de actualización
+            document.getElementById('btnUpdateEmployee').addEventListener('click', async function() {
+                const form = document.getElementById('editEmployeeForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                const fd = new FormData(form);
+
+                try {
+                    const res = await fetch('../employees/updateEmployee.php', {
+                        method: 'POST',
+                        body: fd,
+                        credentials: 'same-origin'
+                    });
+                    const json = await res.json();
+                    if (!json.success) {
+                        alert(json.message || 'Error al actualizar');
+                        return;
+                    }
+
+                    const emp = json.data;
+                    // Actualizar fila en la tabla
+                    const tr = document.querySelector('tr[data-id="' + emp.idPersonal + '"]');
+                    if (tr) {
+                        const fotoSrc = emp.fotografia && emp.fotografia !== 'user.png' ? '../img/imgEmployees/' + emp.fotografia : '../img/user.png';
+                        const nombreTd = tr.querySelector('.emp-nombre');
+                        if (nombreTd) nombreTd.textContent = emp.nombre || '';
+
+                        const duiTd = tr.querySelector('.emp-dui');
+                        if (duiTd) duiTd.textContent = emp.DUI || '';
+
+                        const deptTd = tr.querySelector('.emp-departamento');
+                        if (deptTd) deptTd.textContent = emp.departamento || '';
+
+                        const distTd = tr.querySelector('.emp-distrito');
+                        if (distTd) distTd.textContent = emp.distrito || '';
+
+                        const fotoTd = tr.querySelector('.emp-foto img');
+                        if (fotoTd) fotoTd.src = fotoSrc;
+                    }
+
+                    alert(json.message || 'Empleado actualizado');
+                    // Cerrar modal
+                    var modalEl = document.getElementById('editEmployeeModal');
+                    bootstrap.Modal.getInstance(modalEl).hide();
+                } catch (err) {
+                    console.error(err);
+                    alert('Error de red o del servidor');
+                }
+            });
+        });
     </script>
 </body>
 
