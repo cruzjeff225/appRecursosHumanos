@@ -29,13 +29,24 @@ include_once '../config/config.php';
     <?php
     include_once('nav.php');
     $idSesion = $_SESSION['idUsuario']; // ID del usuario logueado
+    // Lógica de Paginación
+    $registrosPorPágina = 10;
+    $paginaActual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+    $offset = ($paginaActual - 1) * $registrosPorPágina;
+
+    // Contar total de usuarios (excluyendo el usuario logueado)
+    $totalUsuariosQuery = mysqli_query($con, "SELECT COUNT(*) AS total FROM usuarios WHERE idUsuario != '$idSesion'");
+    $totalUsuariosRow = mysqli_fetch_assoc($totalUsuariosQuery)['total'];
+    $totalPaginas = ceil($totalUsuariosRow / $registrosPorPágina);
+
+
     // Consulta SQL para obtener usuarios
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
         $search = mysqli_real_escape_string($con, $_POST['search']);
         $query = "SELECT * FROM usuarios WHERE (nombreUsuario LIKE '%$search%' OR email LIKE '%$search%') AND idUsuario != '$idSesion'";
     } else {
-        // Si no hay búsqueda, obtener todos los usuarios
-        $query = "SELECT * FROM usuarios WHERE idUsuario != '$idSesion'";
+        // Si no hay búsqueda, obtener todos los usuarios (excluyendo el usuario logueado y aplicando paginación)
+        $query = "SELECT * FROM usuarios WHERE idUsuario != '$idSesion' LIMIT $registrosPorPágina OFFSET $offset";
     }
 
     // Ejecutar la consulta
@@ -73,37 +84,59 @@ include_once '../config/config.php';
                     </tr>
                 </thead>
                 <tbody>
-                <?php
-                while ($lista = mysqli_fetch_array($ejecutar_consulta)) {
-                ?>
-                    <tr>
-                        <td><?php echo $i++ ?></td>
-                        <td><?php echo $lista['nombreUsuario'] ?></td>
-                        <td><?php echo $lista['email'] ?></td>
-                        <td class="align-middle">
-                            <div class="d-flex  align-items-center gap-2">
-                                <a href="../user/editUser.php?idUsuario=<?php echo $lista['idUsuario'] ?>" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-edit"></i>
+                    <?php
+                    while ($lista = mysqli_fetch_array($ejecutar_consulta)) {
+                    ?>
+                        <tr>
+                            <td><?php echo $i++ ?></td>
+                            <td><?php echo $lista['nombreUsuario'] ?></td>
+                            <td><?php echo $lista['email'] ?></td>
+                            <td class="align-middle">
+                                <div class="d-flex  align-items-center gap-2">
+                                    <a href="../user/editUser.php?idUsuario=<?php echo $lista['idUsuario'] ?>" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="../user/deleteUser.php" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');" class="m-0">
+                                        <input type="hidden" name="idUsuario" value="<?php echo $lista['idUsuario'] ?>">
+                                        <button class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td class="align-middle">
+                                <a href="../user/editPassword.php?idUsuario=<?php echo $lista['idUsuario'] ?>" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-key"></i>
                                 </a>
-                                <form action="../user/deleteUser.php" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');" class="m-0">
-                                    <input type="hidden" name="idUsuario" value="<?php echo $lista['idUsuario'] ?>">
-                                    <button class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                        <td class="align-middle">
-                            <a href="../user/editPassword.php?idUsuario=<?php echo $lista['idUsuario'] ?>" class="btn btn-warning btn-sm">
-                                <i class="fas fa-key"></i>
-                            </a>
-                        </td>
-                    </tr>
-                <?php
-                }
-                ?>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
                 </tbody>
             </table>
+
+            <!-- Paginación -->
+            <nav aria-label="Paginación de empleados">
+                <ul class="pagination justify-content-center">
+                    <!-- Botón Anterior -->
+                    <li class="page-item <?php echo ($paginaActual <= 1) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?pagina=<?php echo $paginaActual - 1; ?>">Anterior</a>
+                    </li>
+
+                    <!-- Números de página -->
+                    <?php for ($j = 1; $j <= $totalPaginas; $j++): ?>
+                        <li class="page-item <?php echo ($paginaActual == $j) ? 'active' : ''; ?>">
+                            <a class="page-link" href="?pagina=<?php echo $j; ?>"><?php echo $j; ?></a>
+                        </li>
+                    <?php endfor; ?>
+
+                    <!-- Botón Siguiente -->
+                    <li class="page-item <?php echo ($paginaActual >= $totalPaginas) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?pagina=<?php echo $paginaActual + 1; ?>">Siguiente</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
     </div>
@@ -194,7 +227,7 @@ include_once '../config/config.php';
                     form.reportValidity();
                     return;
                 }
-                
+
                 submitBtn.disabled = true;
                 const fd = new FormData(form);
 
