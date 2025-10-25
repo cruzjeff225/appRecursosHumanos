@@ -557,10 +557,10 @@ include_once '../config/config.php';
                     tr.innerHTML = `
                         <td>${newIndex}</td>
                         <td>${emp.nombre}</td>
-                        <td>${emp.Telefono}</td>
                         <td>${emp.DUI}</td>
-                        <td>${emp.fechaNacimiento}</td>
                         <td>${emp.departamento}</td>
+                        <td>${emp.distrito}</td>
+                        
                         <td><img src="${photoSrc}" alt="Fotografía de ${emp.nombre}" style="width:40px;height:40px;border-radius:50%;"></td>
                         <td>
                             <div class="d-flex  align-items-center gap-2">

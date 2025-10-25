@@ -373,7 +373,7 @@ include_once '../config/config.php';
                         credentials: 'same-origin'
                     });
 
-                    // parsear JSON con manejo de errores
+                    // parsear JSON
                     let data;
                     try {
                         data = await res.json();
@@ -398,16 +398,17 @@ include_once '../config/config.php';
                     // Crear nueva fila
                     const tr = document.createElement('tr');
                     tr.className = 'align-middle';
+                    tr.setAttribute('data-id', emp.idUsuario || '');
                     tr.innerHTML = `
                         <td>${newIndex}</td>
-                        <td>${emp.nombreUsuario || ''}</td>
-                        <td>${emp.email || ''}</td>
+                        <td class="usr-nombreUsuario">${emp.nombreUsuario || ''}</td>
+                        <td class="usr-email">${emp.email || ''}</td>
                         <td>
                             <div class="d-flex  align-items-center gap-2">
-                                <a href="../user/editUser.php?idUsuario=${emp.idUsuario || ''}" class="btn btn-primary btn-sm">
+                                <button class="btn btn-primary btn-sm btn-edit" data-id="${emp.idUsuario || ''}">
                                     <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="../user/deleteUser.php" method="POST" onsubmit="return confirm('¿Estás seguro que deseas eliminar este usuario?');" class="m-0 p-0">
+                                </button>
+                                <form action="../user/deleteUser.php" method="POST" class="m-0 p-0 delete-form" data-id="${emp.idUsuario || ''}">
                                     <input type="hidden" name="idUsuario" value="${emp.idUsuario || ''}">
                                     <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                                 </form>
@@ -423,6 +424,33 @@ include_once '../config/config.php';
                     // Agregar la fila al tbody o tabla
                     if (tbody) tbody.appendChild(tr);
                     else table.appendChild(tr);
+
+                    // Vincular el botón de editar para abrir el modal de edición
+                    const newEditBtn = tr.querySelector('.btn-edit');
+                    if (newEditBtn) {
+                        newEditBtn.addEventListener('click', async function() {
+                            const id = this.getAttribute('data-id');
+                            if (!id) return;
+                            try {
+                                const res2 = await fetch('../user/getUser.php?idUsuario=' + encodeURIComponent(id));
+                                const json2 = await res2.json();
+                                if (!json2.success) {
+                                    alert(json2.message || 'Error al obtener usuario');
+                                    return;
+                                }
+                                const d = json2.data;
+                                document.getElementById('edit_idUsuario').value = d.idUsuario || '';
+                                document.getElementById('edit_nombreUsuario').value = d.nombreUsuario || '';
+                                document.getElementById('edit_email').value = d.email || '';
+                                var modalEl = document.getElementById('editUserModal');
+                                var modal = new bootstrap.Modal(modalEl);
+                                modal.show();
+                            } catch (err) {
+                                console.error(err);
+                                alert('Error de red al obtener usuario');
+                            }
+                        });
+                    }
 
                     // Mostrar mensaje de éxito
                     alert(data.message || 'Usuario registrado exitosamente.');
