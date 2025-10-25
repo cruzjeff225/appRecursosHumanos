@@ -102,15 +102,15 @@ include_once '../config/config.php';
                     <?php
                     while ($lista = mysqli_fetch_array($ejecutar_consulta)) {
                     ?>
-                        <tr>
+                        <tr data-id="<?php echo $lista['idUsuario']; ?>">
                             <td><?php echo $i++ ?></td>
-                            <td><?php echo $lista['nombreUsuario'] ?></td>
-                            <td><?php echo $lista['email'] ?></td>
+                            <td class="usr-nombreUsuario"><?php echo htmlspecialchars($lista['nombreUsuario']) ?></td>
+                            <td class="usr-email"><?php echo htmlspecialchars($lista['email']) ?></td>
                             <td class="align-middle">
                                 <div class="d-flex  align-items-center gap-2">
-                                    <a href="../user/editUser.php?idUsuario=<?php echo $lista['idUsuario'] ?>" class="btn btn-primary btn-sm">
+                                    <button class="btn btn-primary btn-sm btn-edit" data-id="<?php echo $lista['idUsuario']; ?>">
                                         <i class="fas fa-edit"></i>
-                                    </a>
+                                    </button>
                                     <form action="../user/deleteUser.php" method="POST" class="m-0 p-0 delete-form" data-id="<?php echo $lista['idUsuario'] ?>">
                                         <input type="hidden" name="idUsuario" value="<?php echo $lista['idUsuario'] ?>">
                                         <button type="submit" class="btn btn-danger btn-sm">
@@ -186,7 +186,7 @@ include_once '../config/config.php';
                                 id="email"
                                 name="email"
                                 placeholder="Ingresa un correo válido"
-                                pattern="[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}"
+                                pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
                                 title="Introduce un correo válido, por ejemplo: usuario@ejemplo.com"
                                 required>
                         </div>
@@ -215,6 +215,47 @@ include_once '../config/config.php';
                             <button type="button" id="btnSubmitUser" class="btn btn-primary">Registrar</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de edición de usuario que se maneja con updateUser.php -->
+     <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Empleado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm" enctype="multipart/form-data" class="row g-3">
+                        <input type="hidden" name="idUsuario" id="edit_idUsuario">
+
+                        <div class="col-md-6">
+                            <label for="edit_nombreUsuario" class="form-label fw-bold">Usuario</label>
+                            <input type="text"
+                                class="form-control"
+                                id="edit_nombreUsuario"
+                                name="nombreUsuario"
+                                pattern="[A-Za-z0-9]{4,10}"
+                                title="El usuario debe tener entre 4 y 10 caracteres, solo letras y números"
+                                required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_email" class="form-label fw-bold">Correo</label>
+                            <input type="email"
+                                class="form-control"
+                                id="edit_email"
+                                name="email"
+                                title="Introduce un correo válido, por ejemplo: usuario@ejemplo.com"
+                                required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnUpdateUser" class="btn btn-primary">Guardar cambios</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -299,6 +340,12 @@ include_once '../config/config.php';
     </script>
     <script>
         (function() {
+            // Validación de email
+            function validateEmail(email) {
+                var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+
             const form = document.getElementById('userForm');
             const submitBtn = document.getElementById('btnSubmitUser');
 
@@ -398,6 +445,91 @@ include_once '../config/config.php';
                 }
             })
         })();
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Abrir modal y cargar datos
+            document.querySelectorAll('.btn-edit').forEach(function(btn) {
+                btn.addEventListener('click', async function(e) {
+                    const id = this.getAttribute('data-id');
+                    if (!id) return;
+                    try {
+                        const res = await fetch('../user/getUser.php?idUsuario=' + encodeURIComponent(id));
+                        const json = await res.json();
+                        if (!json.success) {
+                            alert(json.message || 'Error al obtener usuario');
+                            return;
+                        }
+                        const d = json.data;
+                        // Rellenar formulario
+                        document.getElementById('edit_idUsuario').value = d.idUsuario || '';
+                        document.getElementById('edit_nombreUsuario').value = d.nombreUsuario || '';
+                        document.getElementById('edit_email').value = d.email || '';
+                        // Mostrar modal
+                        var modalEl = document.getElementById('editUserModal');
+                        var modal = new bootstrap.Modal(modalEl);
+                        modal.show();
+                    } catch (err) {
+                        console.error(err);
+                        alert('Error de red al obtener usuario');
+                    }
+                });
+            });
+
+            // Enviar formulario de actualización
+            document.getElementById('btnUpdateUser').addEventListener('click', async function() {
+                const form = document.getElementById('editUserForm');
+                // Validación de email personalizada
+                var emailField = form.querySelector('#edit_email');
+                var emailVal = emailField ? emailField.value.trim() : '';
+                if (!validateEmail(emailVal)) {
+                    if (window.alertify) alertify.error('Introduce un correo válido, por ejemplo: usuario@ejemplo.com');
+                    else alert('Introduce un correo válido, por ejemplo: usuario@ejemplo.com');
+                    if (emailField) emailField.focus();
+                    return;
+                }
+
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                const fd = new FormData(form);
+
+                try {
+                    const res = await fetch('../user/updateUser.php', {
+                        method: 'POST',
+                        body: fd,
+                        credentials: 'same-origin'
+                    });
+                    const json = await res.json();
+                    if (!json.success) {
+                        alert(json.message || 'Error al actualizar');
+                        return;
+                    }
+
+                    const usr = json.data;
+                    // Actualizar fila en la tabla
+                    const tr = document.querySelector('tr[data-id="' + usr.idUsuario + '"]');
+                    if (tr) {
+                        const nombreUsuarioTd = tr.querySelector('.usr-nombreUsuario');
+                        if (nombreUsuarioTd) nombreUsuarioTd.textContent = usr.nombreUsuario || '';
+
+                        const emailTd = tr.querySelector('.usr-email');
+                        if (emailTd) emailTd.textContent = usr.email || '';
+                    }
+
+                    alert(json.message || 'Empleado actualizado');
+                    // Cerrar modal
+                    var modalEl = document.getElementById('editUserModal');
+                    bootstrap.Modal.getInstance(modalEl).hide();
+                } catch (err) {
+                    console.error(err);
+                    alert('Error de red o del servidor');
+                }
+            });
+        });
     </script>
 </body>
 
